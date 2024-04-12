@@ -1,0 +1,88 @@
+postfix: metric_learning
+
+seed: 42
+precision: 16
+accelerator: gpu
+devices: 1
+find_unused_parameters: False
+
+dataframe_name: df.csv
+dataset_root: data/
+logs_root: logs/
+logs_folder: ${now:%Y-%m-%d_%H-%M-%S}_${postfix}
+
+num_workers: 10
+cache_size: 0
+
+sampler:
+  name: balance
+  args:
+    n_labels: 2
+    n_instances: 100
+
+bs_val: 256
+max_epochs: 1
+valid_period: 1
+
+metric_args:
+  metrics_to_exclude_from_visualization: [cmc]
+  cmc_top_k: [1]
+  map_top_k: [5]
+  fmr_vals: []
+  pcf_variance: [0.5, 0.9, 0.99]
+  return_only_overall_category: True
+  visualize_only_overall_category: True
+
+log_images: False
+
+metric_for_checkpointing: OVERALL/cmc/1
+
+extractor:
+  name: cointegrated/rubert-tiny2
+  args:
+    normalise_features: True
+    weights: null
+
+tokenizer:
+  name: cointegrated/rubert-tiny2
+  args:
+    padding: True
+    truncation: True
+    max_length: null
+
+criterion:
+  name: triplet_with_miner
+  args:
+    need_logs: True
+    margin: 0.2
+    reduction: mean
+    miner:
+      name: hard_triplets
+      args: {}
+
+optimizer:
+  name: adam
+  args:
+    lr: 1e-5
+
+scheduling: null
+
+# logger:
+#   name: mlflow
+#   args:
+#     experiment_name: "rubert"
+#     tracking_uri: "http://localhost:8000"
+
+hydra_dir: ${logs_root}/${logs_folder}/
+
+tags:
+  - ${postfix}
+  - rubert-tiny2
+
+hydra:
+  run:
+    dir: ${hydra_dir}
+  searchpath:
+    - pkg://oml.configs
+  job:
+    chdir: True

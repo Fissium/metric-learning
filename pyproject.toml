@@ -1,0 +1,38 @@
+[project]
+name = "metric-learning"
+version = "0.1.0"
+description = "Training of DL models using the metric learning technique"
+authors = [{ name = "Nikita Rubinkovskiy", email = "narubinkovskiy@gmail.com" }]
+dependencies = [
+    "open-metric-learning>=2.1.7",
+    "transformers>=4.39.3",
+    "scikit-learn>=1.4.1.post1",
+]
+requires-python = ">=3.10, <3.11"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+
+
+[tool.pdm]
+distribution = false
+
+
+[tool.pdm.dev-dependencies]
+dev = ["pre-commit>=3.7.0"]
+optional = [
+    "bigxml>=1.0.0",
+    "mlflow-skinny>=2.11.3",
+    "pysftp>=0.2.9",
+    "optimum[onnxruntime]>=1.18.0",
+    "imagededup>=0.3.2",
+]
+
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+
+[tool.ruff.lint]
+select = ["ARG", "F", "E", "I", "W", "B", "C4", "UP", "RUF"]
+fixable = ["I"]

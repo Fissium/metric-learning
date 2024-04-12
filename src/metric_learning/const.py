@@ -1,0 +1,1 @@
+TEXTS_COLUMN = "text"

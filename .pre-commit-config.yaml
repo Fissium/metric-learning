@@ -1,0 +1,56 @@
+default_stages:
+  - commit
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-added-large-files
+        args: [--maxkb=5000]
+      - id: check-yaml
+      - id: detect-private-key
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+  - repo: https://github.com/asottile/setup-cfg-fmt
+    rev: v2.5.0
+    hooks:
+      - id: setup-cfg-fmt
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.5
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.17
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-mkdocs
+          - mdformat-admon
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.9.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-requests==2.31.0.20240406]
+
+  - repo: https://github.com/pdm-project/pdm
+    rev: 2.13.2
+    hooks:
+      - id: pdm-export
+        args: ["-o", "requirements.txt", "--without-hashes", "--prod"]
+        files: ^pdm.lock$
+      - id: pdm-export
+        args:
+          [
+            "-o",
+            "requirements_optional.txt",
+            "--without-hashes",
+            "--no-default",
+            "--with",
+            "optional",
+          ]
+        files: ^pdm.lock$
+      - id: pdm-lock-check
